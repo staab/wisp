@@ -711,23 +711,7 @@
 
 (defn resolve
   [from to]
-  (let [requirer (split (name from) \.)
-        requirement (split (name to) \.)
-        relative? (and (not (identical? (name from)
-                                        (name to)))
-                       (identical? (first requirer)
-                                   (first requirement)))]
-    (if relative?
-      (loop [from requirer
-             to requirement]
-        (if (identical? (first from)
-                        (first to))
-          (recur (rest from) (rest to))
-          (join \/
-                (concat [\.]
-                        (repeat (dec (count from)) "..")
-                        to))))
-      (join \/ requirement))))
+  (join \/ (split (name to) \.)))
 
 (defn id->ns
   "Takes namespace identifier symbol and translates to new
