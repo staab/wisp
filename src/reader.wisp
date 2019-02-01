@@ -97,6 +97,7 @@
 (defn reader-error
   [reader message]
   (let [text (str message
+                  "\n" "file:" (:uri reader)
                   "\n" "line:" (:line reader)
                   "\n" "column:" (:column reader))
         error (SyntaxError text (:uri reader))]

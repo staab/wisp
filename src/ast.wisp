@@ -81,7 +81,7 @@
   (cond (symbol? value) (symbol-name value)
         (keyword? value) (keyword-name value)
         (string? value) value
-        :else (throw (TypeError. (str "Doesn't support name: " value)))))
+        :else (throw (TypeError. (str "Doesn't support name: " (JSON.stringify value))))))
 
 (defn- keyword-namespace
   [x]

@@ -3,7 +3,7 @@
             [wisp.reader :refer [read* read push-back-reader]]
             [wisp.string :refer [replace]]
             [wisp.sequence :refer [map reduce conj cons vec first rest empty? count]]
-            [wisp.runtime :refer [error? =]]
+            [wisp.runtime :refer [error? = vector?]]
             [wisp.ast :refer [name symbol pr-str]]
 
             [wisp.backend.escodegen.generator :refer [generate]
@@ -28,9 +28,23 @@
             :else (recur (conj forms form)
                          (read-form reader eof))))))
 
+(defn join-head [head]
+  (if (vector? head) (.join (.map head (fn [x] x.name)) " ") head.name))
+
+(defn write-debug-form [form]
+  (loop [f form result ""]
+    (let [result (str result " " (or (join-head f.head) ""))]
+      (if f.tail.head (recur f.tail result) (str "`" (.trim result) "`")))))
+
 (defn analyze-form
   [env form]
-  (try (analyze env form) (catch error error)))
+  (try
+   (analyze env form)
+   (catch error
+     (set!
+      error.message
+      (str error.message " in form " (write-debug-form form)))
+    error)))
 
 (defn analyze-forms
   [forms]
